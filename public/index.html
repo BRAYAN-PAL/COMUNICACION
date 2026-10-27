@@ -2,8 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chat en vivo · Barberetos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Panel · Barberetos</title>
+<meta name="theme-color" content="#0d0d0d">
+<link rel="manifest" href="manifest-panel.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Barberetos Panel">
+<link rel="apple-touch-icon" href="iconos/panel-180.png">
+<link rel="icon" href="iconos/panel-192.png" sizes="192x192">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tema.css">
@@ -34,6 +42,7 @@
   <div class="user">
     <div class="avatar">B</div>
     <div><b id="miNombre">Modo visita</b><small><span class="dot" id="miDot"></span><span id="miEstado">sin sesión</span></small></div>
+    <button id="btnInstalar" class="instalar-panel" type="button" hidden>Instalar</button>
     <button id="btnSalir" title="Salir" style="color:var(--muted)">⎋</button>
   </div>
 </aside>
@@ -54,6 +63,9 @@
 
   <section class="col col-2" aria-label="Chat">
     <header class="chat-head">
+      <button class="btn-volver" id="btnVolver" type="button" aria-label="Volver a conversaciones">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
       <span class="avatar" id="chatAvatar">?</span>
       <div>
         <b id="chatNombre">Selecciona una conversación</b>

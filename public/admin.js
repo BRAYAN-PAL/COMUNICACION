@@ -22,6 +22,8 @@ const ui = {
   miDot: $("#miDot"),
   datoNombre: $("#datoNombre"),
   datoInfo: $("#datoInfo"),
+  volver: $("#btnVolver"),
+  instalar: $("#btnInstalar"),
 };
 
 const socket = io();
@@ -243,6 +245,12 @@ function burbuja(m) {
   return div;
 }
 
+function irAlFinal(forzar = false) {
+  if (!ui.mensajes) return;
+  const cerca = ui.mensajes.scrollHeight - ui.mensajes.scrollTop - ui.mensajes.clientHeight < 160;
+  if (forzar || cerca) ui.mensajes.scrollTop = ui.mensajes.scrollHeight;
+}
+
 function pintarMensajes(lista) {
   ui.mensajes.innerHTML = "";
   idsVistos = new Set();
@@ -266,7 +274,7 @@ function pintarMensajes(lista) {
     idsVistos.add(m.id);
     ui.mensajes.appendChild(burbuja(m));
   }
-  ui.mensajes.scrollTop = ui.mensajes.scrollHeight;
+  irAlFinal(true);
 }
 
 function agregar(m) {
@@ -282,7 +290,7 @@ function agregar(m) {
   }
   idsVistos.add(m.id);
   ui.mensajes.appendChild(burbuja(m));
-  ui.mensajes.scrollTop = ui.mensajes.scrollHeight;
+  irAlFinal();
 }
 
 /* --------------------------------- abrir --------------------------------- */
@@ -303,8 +311,15 @@ function abrir(id) {
   ui.escribiendo.textContent = "";
   pintarLista();
   socket.emit("admin:abrir", { convId: id });
+  document.body.classList.add("viendo-chat"); // en celular: pasa a la pantalla del chat
   ui.texto.focus();
 }
+
+// En celular: volver a la lista de conversaciones
+ui.volver.addEventListener("click", () => {
+  document.body.classList.remove("viendo-chat");
+  ui.texto.blur();
+});
 
 $("#btnProbar").addEventListener("click", () => window.open("/chat", "_blank"));
 
@@ -403,4 +418,66 @@ document.addEventListener("visibilitychange", () => {
 
 if ("Notification" in window && Notification.permission === "granted") {
   $("#btnNotificar").textContent = "Notificaciones activas";
+}
+
+/* ---------------------- pantalla fija / teclado del celular ---------------- */
+const vista = window.visualViewport;
+
+function ajustarAlto() {
+  const alto = vista ? vista.height : window.innerHeight;
+  const arriba = vista ? vista.offsetTop : 0;
+  document.documentElement.style.setProperty("--alto-app", Math.round(alto) + "px");
+  document.documentElement.style.setProperty("--top-app", Math.round(arriba) + "px");
+  irAlFinal();
+}
+
+if (vista) {
+  vista.addEventListener("resize", ajustarAlto);
+  vista.addEventListener("scroll", ajustarAlto);
+}
+window.addEventListener("resize", ajustarAlto);
+window.addEventListener("orientationchange", () => setTimeout(ajustarAlto, 250));
+ajustarAlto();
+
+ui.texto.addEventListener("focus", () => {
+  setTimeout(ajustarAlto, 250);
+  setTimeout(ajustarAlto, 550);
+});
+ui.texto.addEventListener("blur", () => setTimeout(ajustarAlto, 250));
+
+/* ------------------------- app instalable (panel) ------------------------- */
+
+let promptInstalar = null;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  promptInstalar = e;
+  ui.instalar.hidden = false;
+});
+
+ui.instalar.addEventListener("click", async () => {
+  if (promptInstalar) {
+    promptInstalar.prompt();
+    const { outcome } = await promptInstalar.userChoice;
+    if (outcome === "accepted") ui.instalar.hidden = true;
+    promptInstalar = null;
+    return;
+  }
+  toast("Toca Compartir (□↑) y luego «Añadir a inicio»");
+});
+
+window.addEventListener("appinstalled", () => {
+  ui.instalar.hidden = true;
+  toast("Panel instalado en tu teléfono");
+});
+
+const esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const yaInstalada =
+  window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+if (esIOS && !yaInstalada) ui.instalar.hidden = false;
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch((e) => console.warn("[pwa] sw:", e.message));
+  });
 }

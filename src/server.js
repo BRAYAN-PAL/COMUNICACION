@@ -12,10 +12,14 @@ const server = http.createServer(app);
 const io = new Server(server, { pingInterval: 20000, pingTimeout: 25000 });
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "..", "public")));
 
+// El panel vive en /panel para que su PWA tenga su propio scope (independiente del chat).
+app.get("/", (_req, res) => res.redirect(302, "/panel"));
+app.get("/panel", (_req, res) => res.sendFile(path.join(__dirname, "..", "public", "index.html")));
 app.get("/chat", (_req, res) => res.sendFile(path.join(__dirname, "..", "public", "chat.html")));
 app.get("/api/salud", (_req, res) => res.json({ ok: true, conversaciones: store.listar().length }));
+
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 /* --------------------------- presencia en memoria -------------------------- */
 

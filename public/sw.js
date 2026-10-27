@@ -1,16 +1,23 @@
-﻿// Service worker del chat: shell offline + notificaciones.
-const CACHE = "barberetos-chat-v6";
+﻿// Service worker compartido: shell offline del chat y del panel + notificaciones.
+const CACHE = "barberetos-chat-v7";
 
 const SHELL = [
   "/chat",
   "/chat.html",
+  "/panel",
   "/tema.css",
   "/chat.css",
+  "/admin.css",
   "/chat.js",
+  "/admin.js",
   "/manifest.webmanifest",
+  "/manifest-panel.webmanifest",
   "/iconos/icono-192.png",
   "/iconos/icono-512.png",
   "/iconos/icono-180.png",
+  "/iconos/panel-192.png",
+  "/iconos/panel-512.png",
+  "/iconos/panel-180.png",
   "/socket.io/socket.io.js",
 ];
 
@@ -37,12 +44,23 @@ self.addEventListener("activate", (evento) => {
 
 /* --------------------------------- fetch ---------------------------------- */
 
-// Devuelve el shell guardado (o un aviso simple si no hay caché).
-function shell() {
+// Devuelve el shell guardado de la app que corresponde (chat o panel).
+function shell(ruta) {
+  const esPanel = String(ruta).startsWith("/panel");
+  const primero = esPanel ? "/panel" : "/chat.html";
+  const segundo = esPanel ? null : "/chat";
+
   return caches
-    .match("/chat.html")
-    .then((hit) => hit || caches.match("/chat"))
-    .then((hit) => hit || new Response("Sin conexión", { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" } }));
+    .match(primero)
+    .then((hit) => hit || (segundo ? caches.match(segundo) : null))
+    .then(
+      (hit) =>
+        hit ||
+        new Response("Sin conexión", {
+          status: 503,
+          headers: { "Content-Type": "text/plain; charset=utf-8" },
+        })
+    );
 }
 
 self.addEventListener("fetch", (evento) => {
@@ -57,20 +75,26 @@ self.addEventListener("fetch", (evento) => {
 
   // Navegación: red primero; si falla o el servidor está caído (5xx), shell guardado.
   if (req.mode === "navigate") {
+    const esPanel = url.pathname.startsWith("/panel");
+
     evento.respondWith(
       fetch(req)
         .then((res) => {
           if (res.ok) {
             const copia = res.clone();
             caches.open(CACHE).then((c) => {
-              c.put("/chat.html", copia.clone());
-              c.put("/chat", copia.clone());
+              if (esPanel) {
+                c.put("/panel", copia.clone());
+              } else {
+                c.put("/chat.html", copia.clone());
+                c.put("/chat", copia.clone());
+              }
             });
             return res;
           }
-          return res.status >= 500 ? shell() : res;
+          return res.status >= 500 ? shell(url.pathname) : res;
         })
-        .catch(() => shell())
+        .catch(() => shell(url.pathname))
     );
     return;
   }
@@ -118,7 +142,7 @@ self.addEventListener("notificationclick", (evento) => {
   evento.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((lista) => {
       for (const cliente of lista) {
-        if (cliente.url.includes("/chat")) return cliente.focus();
+        if (cliente.url.includes("/chat") || cliente.url.includes("/panel")) return cliente.focus();
       }
       return self.clients.openWindow(destino);
     })

@@ -20,7 +20,7 @@ npm start
 
 | Página | URL |
 |---|---|
-| Panel (tú) | <http://localhost:3000> |
+| Panel (tú) | <http://localhost:3000/panel> |
 | Chat (cliente) | <http://localhost:3000/chat> |
 
 El panel pide un **código de administrador**. Por defecto es `barberetos`
@@ -29,29 +29,35 @@ que no lo pide cada vez.
 
 En Windows también hay `iniciar.bat`.
 
-## Web app instalable (PWA)
+## Dos web apps instalables (PWA)
 
-`/chat` es una **web app**: se instala con icono propio, abre a pantalla completa
-(sin barra del navegador) y arranca aunque no haya conexión.
+Las dos páginas son **web apps independientes**: cada una se instala con su icono,
+abre a pantalla completa y tiene su propio shell sin conexión.
+
+| App | URL | Manifest | Icono |
+|---|---|---|---|
+| Chat (cliente) | `/chat` | `manifest.webmanifest` (scope `/chat`) | B dorada sobre negro |
+| Panel (barbero) | `/panel` | `manifest-panel.webmanifest` (scope `/panel`) | B negra sobre ámbar |
 
 | Dónde | Cómo instalarla |
 |---|---|
-| Android (Chrome) | Botón **“Instalar app”** en la cabecera, o menú ⋮ → *Instalar aplicación* |
+| Android (Chrome) | Botón **“Instalar app”** / **“Instalar”**, o menú ⋮ → *Instalar aplicación* |
 | iPhone/iPad (Safari) | Compartir **□↑** → *Añadir a la pantalla de inicio* |
 | Escritorio (Chrome/Edge) | Icono de instalar en la barra de direcciones |
 
-- **Sin conexión:** el service worker guarda el shell, así que la app abre y avisa
-  “Sin conexión · reintentando…”. Los mensajes necesitan internet (el socket).
-- **Notificaciones:** en iPhone, la app instalada sí recibe notificaciones del
-  navegador; en Android también. Se activan desde el panel (lado barbero).
-- **Pantalla fija:** la app no hace scroll de página; solo se desplaza el hilo de
-  mensajes. La cabecera y el campo de escribir quedan siempre visibles, y al abrir
-  el teclado la altura se recalcula (`visualViewport`) para que no quede hueco negro
-  ni se esconda el input. Los mensajes rápidos se ocultan cuando no hay sitio.
-- **Archivos:** `public/manifest.webmanifest`, `public/sw.js` e `public/iconos/`.
+- **Sin conexión:** el service worker guarda las dos apps (chat y panel), así que
+  abren aunque el servidor esté caído. Los mensajes sí necesitan internet.
+- **Pantalla fija en celular:** no hay scroll de página; solo se desplaza el hilo de
+  mensajes. La cabecera y el campo de escribir quedan siempre visibles y, al abrir el
+  teclado, la altura se recalcula con `visualViewport` para no dejar hueco negro.
+- **Panel en celular:** pasa a dos pantallas (lista de conversaciones ↔ chat) con
+  botón de volver; la lista, el hilo y el campo de escribir se adaptan al teclado.
+- **Notificaciones:** se activan desde el panel (lado barbero).
+- **Archivos:** `public/manifest*.webmanifest`, `public/sw.js` e `public/iconos/`.
 
-> ⚠️ Si cambias `chat.html`, `chat.css` o `chat.js`, **sube la versión** en `sw.js`
-> (`barberetos-chat-v6` → `v7`). Si no, el celular sigue mostrando la copia guardada.
+> ⚠️ Si cambias `chat.html`, `chat.css`, `chat.js`, `index.html`, `admin.css` o
+> `admin.js`, **sube la versión** en `sw.js` (`barberetos-chat-v7` → `v8`). Si no, el
+> celular sigue mostrando la copia guardada.
 
 ## Qué hace
 
