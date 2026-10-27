@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chat en vivo · Barberetos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tema.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>
+    <div><strong>BARBERETOS</strong><small>Gestión de la barbería</small></div>
+  </div>
+
+  <div class="group">El negocio</div>
+  <nav class="nav" aria-label="Principal">
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Resumen</span></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Agenda</span></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.5 3.3-5.5 6.5-5.5s5.9 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2 .7 3.2 2.4 3.5 5.2"/></svg><span>Clientes</span></a>
+    <a href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Chat en vivo</span></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg><span>Ventas y caja</span></a>
+  </nav>
+  <div class="group">Administración</div>
+  <nav class="nav" aria-label="Administración">
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><span>Configuración</span></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span>Auditoría</span></a>
+  </nav>
+
+  <div class="user">
+    <div class="avatar">B</div>
+    <div><b id="miNombre">Modo visita</b><small><span class="dot" id="miDot"></span><span id="miEstado">sin sesión</span></small></div>
+    <button id="btnSalir" title="Salir" style="color:var(--muted)">⎋</button>
+  </div>
+</aside>
+
+<main class="main">
+  <section class="col col-1" aria-label="Conversaciones">
+    <div class="col-head">
+      <h1>Conversaciones</h1>
+      <input class="search" type="search" id="buscar" placeholder="Buscar por nombre o mensaje" aria-label="Buscar conversación">
+    </div>
+    <div class="chips" role="group" aria-label="Filtrar">
+      <button class="chip" aria-pressed="true" data-filtro="todas">Todas</button>
+      <button class="chip" aria-pressed="false" data-filtro="sin-leer">Sin leer</button>
+      <button class="chip" aria-pressed="false" data-filtro="en-linea">En línea</button>
+    </div>
+    <div class="lista" role="listbox" id="lista" aria-label="Lista de conversaciones"></div>
+  </section>
+
+  <section class="col col-2" aria-label="Chat">
+    <header class="chat-head">
+      <span class="avatar" id="chatAvatar">?</span>
+      <div>
+        <b id="chatNombre">Selecciona una conversación</b>
+        <small><span class="dot" id="chatDot"></span><span id="chatEstado">—</span></small>
+      </div>
+    </header>
+    <div class="mensajes" id="mensajes" aria-live="polite">
+      <div class="empty"><div><strong>Sin conversación abierta</strong><p>Elige un visitante de la izquierda para ver y responder sus mensajes.</p></div></div>
+    </div>
+    <div class="typing" id="escribiendo" style="padding:0 24px 6px"></div>
+    <form class="composer" id="composer">
+      <input id="texto" type="text" placeholder="Escribe un mensaje" aria-label="Mensaje" autocomplete="off" disabled>
+      <button class="send" type="submit" aria-label="Enviar" id="btnEnviar" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      </button>
+    </form>
+  </section>
+
+  <aside class="col col-3" aria-label="Acciones">
+    <div class="top-actions">
+      <button class="btn-primary" type="button" id="btnProbar"><span aria-hidden="true">+</span> Abrir chat de cliente</button>
+      <button class="btn-secundario" type="button" id="btnNotificar">Activar notificaciones</button>
+    </div>
+    <div class="side-section">
+      <h2>Visitante</h2>
+      <div class="card"><b id="datoNombre">Sin selección</b><small id="datoInfo">—</small></div>
+    </div>
+    <div class="side-section">
+      <h2>Mensajes rápidos</h2>
+      <div class="tpl" id="tpl">
+        <button type="button">¡Hola! ¿En qué te puedo ayudar?</button>
+        <button type="button">Atendemos de lunes a sábado, de 9 a 20 h.</button>
+        <button type="button">¿Te reservo una cita? Dime el día y la hora.</button>
+        <button type="button">Un corte cuesta S/ 25 y corte + barba S/ 40.</button>
+      </div>
+    </div>
+    <div class="side-section">
+      <h2>Hoy</h2>
+      <div class="stat"><span>Conversaciones</span><span id="statConversaciones">0</span></div>
+      <div class="stat"><span>En línea</span><span id="statEnLinea">0</span></div>
+      <div class="stat"><span>Sin leer</span><span id="statSinLeer">0</span></div>
+    </div>
+  </aside>
+</main>
+
+<div class="login" id="login">
+  <form id="formLogin">
+    <h2>Acceso al panel</h2>
+    <p>Introduce el código de administrador.</p>
+    <input id="codigo" type="password" placeholder="Código" autocomplete="current-password" required>
+    <button type="submit">Entrar</button>
+    <div class="error" id="loginError"></div>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+# Blueprint de Render: crea el servicio web solo con conectar este repositorio.
+# Dashboard → New + → Blueprint → elige el repo → Apply.
+services:
+  - type: web
+    name: barberetos-chat
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/salud
+    autoDeploy: true
+    envVars:
+      # Código del panel. Render lo pide al aplicar el blueprint (no va en el repo).
+      - key: ADMIN_CODE
+        sync: false
+      # Socket.IO necesita UNA sola instancia: no subas el número de instancias.
+      - key: NODE_VERSION
+        value: "22"
+    # Plan free = disco efímero: el historial se borra al reiniciar o redesplegar.
+    # Para conservarlo, pasa a un plan con disco y añade:
+    #
+    #   disk:
+    #     name: datos
+    #     mountPath: /var/data
+    #     sizeGB: 1
+    #
+    # más la variable DATA_DIR=/var/data

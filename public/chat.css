@@ -1,0 +1,124 @@
+body {
+  display: grid;
+  place-items: stretch;
+  background: radial-gradient(120% 80% at 50% 0%, #171410 0%, #0d0d0d 55%);
+}
+
+.app {
+  width: 100%;
+  max-width: 760px;
+  height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: rgba(13, 13, 13, 0.6);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+/* Cabecera */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(17, 17, 17, 0.85);
+  backdrop-filter: blur(8px);
+}
+.marca { display: flex; align-items: center; gap: 10px; }
+.marca svg { color: var(--amber); }
+.marca strong { font-family: var(--serif); font-size: 16px; letter-spacing: 0.05em; display: block; }
+.marca small { color: var(--muted); font-size: 11.5px; display: flex; align-items: center; gap: 6px; }
+.etiqueta {
+  font-size: 11px; color: var(--muted); border: 1px solid var(--line);
+  padding: 4px 10px; border-radius: 99px; white-space: nowrap;
+}
+.acciones-top { display: flex; align-items: center; gap: 8px; }
+.instalar {
+  font-size: 11.5px; font-weight: 600; color: #1a1405; background: var(--amber);
+  padding: 6px 12px; border-radius: 99px; white-space: nowrap;
+}
+.instalar:hover { filter: brightness(1.08); }
+.instalar[hidden] { display: none; }
+.aviso {
+  background: rgba(217, 164, 65, 0.12); color: var(--amber);
+  font-size: 12px; text-align: center; padding: 7px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.aviso[hidden] { display: none; }
+
+/* Hilo */
+.hilo {
+  flex: 1;
+  overflow: auto;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overscroll-behavior: contain;
+}
+
+.bienvenida { text-align: center; padding: 28px 10px; color: var(--muted); }
+.bienvenida .icono {
+  width: 52px; height: 52px; margin: 0 auto 14px; border-radius: 50%;
+  background: var(--amber-soft); color: var(--amber); display: grid; place-items: center;
+}
+.bienvenida h1 { font-family: var(--serif); color: var(--text); font-size: 22px; margin-bottom: 6px; }
+.bienvenida p { font-size: 13px; max-width: 320px; margin: 0 auto; line-height: 1.55; }
+
+/* Zona de escritura */
+.typing { padding: 0 18px; }
+
+.rapidas {
+  display: flex; gap: 8px; padding: 8px 14px 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.rapidas::-webkit-scrollbar { display: none; }
+.rapidas button {
+  white-space: nowrap; font-size: 12.5px; color: #cfcac1;
+  border: 1px solid var(--line); background: var(--panel);
+  padding: 7px 13px; border-radius: 99px;
+}
+.rapidas button:hover { border-color: var(--amber); color: var(--text); }
+
+.barra {
+  display: flex; gap: 10px; padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line); background: rgba(17, 17, 17, 0.6);
+}
+.barra input {
+  flex: 1; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 99px; padding: 12px 18px;
+}
+.barra input:disabled { opacity: 0.5; }
+.send {
+  width: 44px; height: 44px; border-radius: 50%; background: var(--amber); color: #1a1405;
+  display: grid; place-items: center; flex: none;
+}
+.send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Nombre */
+.nombre {
+  position: fixed; inset: 0; background: rgba(6, 6, 6, 0.94);
+  display: grid; place-items: center; padding: 20px; z-index: 40;
+}
+.nombre[hidden] { display: none; }
+.tarjeta {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+  padding: 28px; width: min(360px, 100%); text-align: center;
+}
+.tarjeta h2 { font-family: var(--serif); font-size: 22px; margin-bottom: 6px; }
+.tarjeta p { color: var(--muted); font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+.tarjeta input {
+  width: 100%; background: var(--bg); border: 1px solid var(--line);
+  border-radius: 10px; padding: 11px 14px; text-align: center;
+}
+.tarjeta button {
+  width: 100%; margin-top: 12px; background: var(--amber); color: #1a1405;
+  border-radius: 10px; padding: 11px; font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  .app { border: 0; max-width: none; }
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chatea con Barberetos</title>
+<meta name="theme-color" content="#0d0d0d">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Barberetos">
+<link rel="apple-touch-icon" href="iconos/icono-180.png">
+<link rel="icon" href="iconos/icono-192.png" sizes="192x192">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tema.css">
+<link rel="stylesheet" href="chat.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="marca">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>
+      <div><strong>BARBERETOS</strong><small><span class="dot" id="estadoDot"></span><span id="estadoTxt">conectando…</span></small></div>
+    </div>
+    <div class="acciones-top">
+      <button class="instalar" id="btnInstalar" type="button" hidden>Instalar app</button>
+      <span class="etiqueta">Atención en vivo</span>
+    </div>
+  </header>
+
+  <div class="aviso" id="aviso" hidden>Sin conexión · reintentando…</div>
+
+  <main class="hilo" id="hilo" aria-live="polite">
+    <div class="bienvenida">
+      <div class="icono">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.9 8.9 0 0 1-4-1L3 20l1.2-4.4a8.3 8.3 0 0 1-1.2-4.1A8.4 8.4 0 0 1 11.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>
+      </div>
+      <h1>Hola 👋</h1>
+      <p>Escríbenos y te respondemos al instante. Si no estamos, te contestamos apenas volvamos.</p>
+    </div>
+  </main>
+
+  <div class="typing" id="escribiendo"></div>
+
+  <div class="rapidas" id="rapidas">
+    <button type="button">Quiero reservar una cita</button>
+    <button type="button">¿Cuánto cuesta un corte?</button>
+    <button type="button">¿A qué hora abren?</button>
+  </div>
+
+  <form class="barra" id="form">
+    <input id="texto" type="text" placeholder="Escribe tu mensaje…" autocomplete="off" aria-label="Mensaje" disabled>
+    <button class="send" type="submit" id="btnEnviar" aria-label="Enviar" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
+  </form>
+</div>
+
+<div class="nombre" id="pedirNombre">
+  <form class="tarjeta" id="formNombre">
+    <h2>Antes de empezar</h2>
+    <p>¿Cómo te llamas? Así sabemos con quién hablamos.</p>
+    <input id="nombreInput" type="text" placeholder="Tu nombre" maxlength="40" autocomplete="name" required>
+    <button type="submit">Entrar al chat</button>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="chat.js"></script>
+</body>
+</html>
