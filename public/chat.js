@@ -68,6 +68,12 @@ function burbuja(m) {
   return div;
 }
 
+function irAlFinal(forzar = false) {
+  if (!ui.hilo) return;
+  const cerca = ui.hilo.scrollHeight - ui.hilo.scrollTop - ui.hilo.clientHeight < 140;
+  if (forzar || cerca) ui.hilo.scrollTop = ui.hilo.scrollHeight;
+}
+
 function pintarMensajes(lista) {
   ui.hilo.innerHTML = "";
   idsVistos = new Set();
@@ -91,7 +97,7 @@ function pintarMensajes(lista) {
     idsVistos.add(m.id);
     ui.hilo.appendChild(burbuja(m));
   }
-  ui.hilo.scrollTop = ui.hilo.scrollHeight;
+  irAlFinal(true);
 }
 
 function agregar(m) {
@@ -107,7 +113,7 @@ function agregar(m) {
   }
   idsVistos.add(m.id);
   ui.hilo.appendChild(burbuja(m));
-  ui.hilo.scrollTop = ui.hilo.scrollHeight;
+  irAlFinal();
   if (m.de === "admin") {
     if (!document.hidden) socket.emit("visitante:leido");
     else document.title = "Nuevo mensaje · Barberetos";
@@ -259,3 +265,33 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js").catch((e) => console.warn("[pwa] sw:", e.message));
   });
 }
+
+/* ---------------------- pantalla fija / teclado del celular ---------------- */
+// En móvil, al abrir el teclado el área visible cambia: sin esto queda un hueco
+// negro arriba o el campo de escribir se esconde detrás del teclado.
+const vista = window.visualViewport;
+
+function ajustarAlto() {
+  const alto = vista ? vista.height : window.innerHeight;
+  const arriba = vista ? vista.offsetTop : 0;
+  document.documentElement.style.setProperty("--alto-app", Math.round(alto) + "px");
+  document.documentElement.style.setProperty("--top-app", Math.round(arriba) + "px");
+  // Pantalla corta = teclado abierto (o celular en horizontal): se quitan los rápidos.
+  document.documentElement.classList.toggle("teclado", alto < 520);
+  irAlFinal();
+}
+
+if (vista) {
+  vista.addEventListener("resize", ajustarAlto);
+  vista.addEventListener("scroll", ajustarAlto);
+}
+window.addEventListener("resize", ajustarAlto);
+window.addEventListener("orientationchange", () => setTimeout(ajustarAlto, 250));
+ajustarAlto();
+
+// El teclado tarda en abrirse/cerrarse: recalcular un par de veces.
+ui.texto.addEventListener("focus", () => {
+  setTimeout(ajustarAlto, 250);
+  setTimeout(ajustarAlto, 550);
+});
+ui.texto.addEventListener("blur", () => setTimeout(ajustarAlto, 250));

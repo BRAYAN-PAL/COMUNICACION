@@ -44,10 +44,14 @@ En Windows también hay `iniciar.bat`.
   “Sin conexión · reintentando…”. Los mensajes necesitan internet (el socket).
 - **Notificaciones:** en iPhone, la app instalada sí recibe notificaciones del
   navegador; en Android también. Se activan desde el panel (lado barbero).
+- **Pantalla fija:** la app no hace scroll de página; solo se desplaza el hilo de
+  mensajes. La cabecera y el campo de escribir quedan siempre visibles, y al abrir
+  el teclado la altura se recalcula (`visualViewport`) para que no quede hueco negro
+  ni se esconda el input. Los mensajes rápidos se ocultan cuando no hay sitio.
 - **Archivos:** `public/manifest.webmanifest`, `public/sw.js` e `public/iconos/`.
 
 > ⚠️ Si cambias `chat.html`, `chat.css` o `chat.js`, **sube la versión** en `sw.js`
-> (`barberetos-chat-v5` → `v6`). Si no, el celular sigue mostrando la copia guardada.
+> (`barberetos-chat-v6` → `v7`). Si no, el celular sigue mostrando la copia guardada.
 
 ## Qué hace
 

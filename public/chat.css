@@ -1,16 +1,28 @@
+html,
 body {
-  display: grid;
-  place-items: stretch;
-  background: radial-gradient(120% 80% at 50% 0%, #171410 0%, #0d0d0d 55%);
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
+body {
+  background: radial-gradient(120% 80% at 50% 0%, #171410 0%, #0d0d0d 55%);
+  touch-action: manipulation;
+}
+
+/* La app ocupa exactamente el área visible: no se mueve, solo scrollea el hilo.
+   --alto-app y --top-app los calcula chat.js con visualViewport (teclado abierto). */
 .app {
+  position: fixed;
+  top: var(--top-app, 0px);
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
   max-width: 760px;
-  height: 100dvh;
-  margin: 0 auto;
+  height: var(--alto-app, 100dvh);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background: rgba(13, 13, 13, 0.6);
   border-left: 1px solid var(--line);
   border-right: 1px solid var(--line);
@@ -18,11 +30,13 @@ body {
 
 /* Cabecera */
 .top {
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 14px 18px;
+  padding-top: calc(14px + env(safe-area-inset-top));
   border-bottom: 1px solid var(--line);
   background: rgba(17, 17, 17, 0.85);
   backdrop-filter: blur(8px);
@@ -49,15 +63,19 @@ body {
 }
 .aviso[hidden] { display: none; }
 
-/* Hilo */
+/* Hilo: lo único que scrollea */
 .hilo {
-  flex: 1;
-  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 22px 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-bottom: 8px;
 }
 
 .bienvenida { text-align: center; padding: 28px 10px; color: var(--muted); }
@@ -68,10 +86,11 @@ body {
 .bienvenida h1 { font-family: var(--serif); color: var(--text); font-size: 22px; margin-bottom: 6px; }
 .bienvenida p { font-size: 13px; max-width: 320px; margin: 0 auto; line-height: 1.55; }
 
-/* Zona de escritura */
-.typing { padding: 0 18px; }
+/* Zona de escritura (siempre visible, pegada abajo) */
+.typing { flex: none; padding: 0 18px; }
 
 .rapidas {
+  flex: none;
   display: flex; gap: 8px; padding: 8px 14px 0;
   overflow-x: auto; scrollbar-width: none;
 }
@@ -84,12 +103,14 @@ body {
 .rapidas button:hover { border-color: var(--amber); color: var(--text); }
 
 .barra {
+  flex: none;
   display: flex; gap: 10px; padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line); background: rgba(17, 17, 17, 0.6);
 }
 .barra input {
-  flex: 1; background: var(--panel); border: 1px solid var(--line);
+  flex: 1; min-width: 0; background: var(--panel); border: 1px solid var(--line);
   border-radius: 99px; padding: 12px 18px;
+  font-size: 16px; /* 16px evita que iPhone haga zoom al enfocar */
 }
 .barra input:disabled { opacity: 0.5; }
 .send {
@@ -100,7 +121,9 @@ body {
 
 /* Nombre */
 .nombre {
-  position: fixed; inset: 0; background: rgba(6, 6, 6, 0.94);
+  position: fixed; top: var(--top-app, 0px); left: 0; right: 0;
+  height: var(--alto-app, 100dvh);
+  background: rgba(6, 6, 6, 0.94);
   display: grid; place-items: center; padding: 20px; z-index: 40;
 }
 .nombre[hidden] { display: none; }
@@ -121,4 +144,16 @@ body {
 
 @media (max-width: 760px) {
   .app { border: 0; max-width: none; }
+  .msg { max-width: 82%; }
+  .hilo { padding: 16px 14px; }
+  .top { padding-left: 14px; padding-right: 14px; }
+}
+
+/* Teclado abierto en el celular: se libera espacio quitando los rápidos */
+.teclado .rapidas { display: none; }
+
+@media (max-height: 470px) {
+  .rapidas { display: none; }
+  .top { padding-top: calc(8px + env(safe-area-inset-top)); padding-bottom: 8px; }
+  .hilo { padding-top: 12px; }
 }

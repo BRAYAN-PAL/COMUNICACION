@@ -1,5 +1,5 @@
 ﻿// Service worker del chat: shell offline + notificaciones.
-const CACHE = "barberetos-chat-v5";
+const CACHE = "barberetos-chat-v6";
 
 const SHELL = [
   "/chat",
